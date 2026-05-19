@@ -1,1 +1,469 @@
+CREATE TABLE employee_details (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    manager_id INT,
+    department_id INT
+);
 
+INSERT INTO employee_details VALUES
+(1, 'Karthik', NULL, 1),
+(2, 'Ajay', 1, 1),
+(3, 'Vijay', 1, 2),
+(4, 'Vinay', 2, 2),
+(5, 'Meena', 3, 3),
+(6, 'Veer', NULL, 4),
+(7, 'Keerthi', 4, 5),
+(8, 'Priya', 4, 5);
+
+
+CREATE TABLE department_details (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+INSERT INTO department_details VALUES
+(1, 'HR'),
+(2, 'IT'),
+(3, 'Finance'),
+(4, 'Marketing'),
+(5, 'Sales');
+
+
+CREATE TABLE project_details (
+    project_id INT PRIMARY KEY,
+    project_name VARCHAR(50),
+    emp_id INT
+);
+
+INSERT INTO project_details VALUES
+(101, 'Project Alpha', 1),
+(102, 'Project Beta', 2),
+(103, 'Project Gamma', 3),
+(104, 'Project Delta', 4),
+(105, 'Project Epsilon', 5);
+
+
+
+-- Query 1
+SELECT e.emp_name AS Employee_Name,
+       m.emp_name AS Manager_Name
+FROM employee_details e
+LEFT JOIN employee_details m
+ON e.manager_id = m.emp_id;
+
+Output:
+| Employee_Name | Manager_Name |
+| ------------- | ------------ |
+| Karthik       | NULL         |
+| Ajay          | Karthik      |
+| Vijay         | Karthik      |
+| Vinay         | Ajay         |
+| Meena         | Vijay        |
+| Veer          | NULL         |
+| Keerthi       | Vinay        |
+| Priya         | Vinay        |
+
+
+-- Query 2
+SELECT e.emp_name AS Employee,
+       d.dept_name AS Department
+FROM employee_details e
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id;
+
+Output:
+| Employee | Department |
+| -------- | ---------- |
+| Karthik  | HR         |
+| Ajay     | HR         |
+| Vijay    | IT         |
+| Vinay    | IT         |
+| Meena    | Finance    |
+| Veer     | Marketing  |
+| Keerthi  | Sales      |
+| Priya    | Sales      |
+
+
+-- Query 3
+SELECT e.emp_name AS Employee,
+       m.emp_name AS Reporting_Manager
+FROM employee_details e
+INNER JOIN employee_details m
+ON e.manager_id = m.emp_id;
+
+Output:
+| Employee | Reporting_Manager |
+| -------- | ----------------- |
+| Ajay     | Karthik          |
+| Vijay    | Karthik          |
+| Vinay    | Ajay             |
+| Meena    | Vijay            |
+| Keerthi  | Vinay            |
+| Priya    | Vinay            |
+
+
+-- Query 4
+SELECT e.emp_name AS Employee_Name
+FROM employee_details e
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id
+WHERE d.dept_id IS NULL;
+
+Output:
+No records found.
+
+
+-- Query 5
+SELECT e.emp_name AS Employee,
+       p.project_name AS Assigned_Project
+FROM employee_details e
+LEFT JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee | Assigned_Project |
+| -------- | ---------------- |
+| Karthik  | Project Alpha    |
+| Ajay     | Project Beta     |
+| Vijay    | Project Gamma    |
+| Vinay    | Project Delta    |
+| Meena    | Project Epsilon  |
+| Veer     | NULL             |
+| Keerthi  | NULL             |
+| Priya    | NULL             |
+
+
+-- Query 6
+SELECT e.emp_name AS Employee,
+       p.project_name AS Project_Name
+FROM employee_details e
+INNER JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee | Project_Name    |
+| -------- | ---------------- |
+| Karthik  | Project Alpha    |
+| Ajay     | Project Beta     |
+| Vijay    | Project Gamma    |
+| Vinay    | Project Delta    |
+| Meena    | Project Epsilon  |
+
+
+-- Query 7
+SELECT p.project_name AS Project,
+       e.emp_name AS Employee
+FROM project_details p
+LEFT JOIN employee_details e
+ON p.emp_id = e.emp_id;
+
+Output:
+| Project          | Employee |
+| ---------------- | -------- |
+| Project Alpha    | Karthik  |
+| Project Beta     | Ajay     |
+| Project Gamma    | Vijay    |
+| Project Delta    | Vinay    |
+| Project Epsilon  | Meena    |
+
+
+-- Query 8
+SELECT e.emp_name AS Employee,
+       d.dept_name AS Department
+FROM employee_details e
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id;
+
+Output:
+| Employee | Department |
+| -------- | ---------- |
+| Karthik  | HR         |
+| Ajay     | HR         |
+| Vijay    | IT         |
+| Vinay    | IT         |
+| Meena    | Finance    |
+| Veer     | Marketing  |
+| Keerthi  | Sales      |
+| Priya    | Sales      |
+
+
+-- Query 9
+SELECT d.dept_name AS Department,
+       e.emp_name AS Employee
+FROM department_details d
+LEFT JOIN employee_details e
+ON d.dept_id = e.department_id;
+
+Output:
+| Department | Employee |
+| ---------- | -------- |
+| HR         | Karthik  |
+| HR         | Ajay     |
+| IT         | Vijay    |
+| IT         | Vinay    |
+| Finance    | Meena    |
+| Marketing  | Veer     |
+| Sales      | Keerthi  |
+| Sales      | Priya    |
+
+
+-- Query 10
+SELECT e.emp_name AS Employee,
+       p.project_name AS Project
+FROM employee_details e
+LEFT JOIN project_details p
+ON e.emp_id = p.emp_id
+WHERE p.project_id IS NULL;
+
+Output:
+| Employee | Project |
+| -------- | ------- |
+| Veer     | NULL    |
+| Keerthi  | NULL    |
+| Priya    | NULL    |
+
+-- Query 11
+SELECT e.emp_name AS Employee_Name,
+       p.project_name AS Project_Assigned
+FROM employee_details e
+LEFT JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee_Name | Project_Assigned |
+| ------------- | ---------------- |
+| Karthik       | Project Alpha    |
+| Ajay          | Project Beta     |
+| Vijay         | Project Gamma    |
+| Vinay         | Project Delta    |
+| Meena         | Project Epsilon  |
+| Veer          | NULL             |
+| Keerthi       | NULL             |
+| Priya         | NULL             |
+
+
+-- Query 12
+SELECT p.project_name AS Project_Name,
+       e.emp_name AS Employee_Name
+FROM project_details p
+LEFT JOIN employee_details e
+ON p.emp_id = e.emp_id;
+
+Output:
+| Project_Name     | Employee_Name |
+| ---------------- | ------------- |
+| Project Alpha    | Karthik       |
+| Project Beta     | Ajay          |
+| Project Gamma    | Vijay         |
+| Project Delta    | Vinay         |
+| Project Epsilon  | Meena         |
+
+
+-- Query 13
+SELECT e.emp_name AS Employee,
+       m.emp_name AS Manager,
+       p.project_name AS Project
+FROM employee_details e
+INNER JOIN employee_details m
+ON e.manager_id = m.emp_id
+INNER JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee | Manager | Project          |
+| -------- | ------- | ---------------- |
+| Ajay     | Karthik | Project Beta     |
+| Vijay    | Karthik | Project Gamma    |
+| Vinay    | Ajay    | Project Delta    |
+| Meena    | Vijay   | Project Epsilon  |
+
+
+-- Query 14
+SELECT e.emp_name AS Employee_Name,
+       d.dept_name AS Department_Name
+FROM employee_details e
+INNER JOIN department_details d
+ON e.department_id = d.dept_id;
+
+Output:
+| Employee_Name | Department_Name |
+| ------------- | --------------- |
+| Karthik       | HR              |
+| Ajay          | HR              |
+| Vijay         | IT              |
+| Vinay         | IT              |
+| Meena         | Finance         |
+| Veer          | Marketing       |
+| Keerthi       | Sales           |
+| Priya         | Sales           |
+
+
+-- Query 15
+SELECT d.dept_name AS Department,
+       e.emp_name AS Employee
+FROM department_details d
+LEFT JOIN employee_details e
+ON d.dept_id = e.department_id;
+
+Output:
+| Department | Employee |
+| ---------- | -------- |
+| HR         | Karthik  |
+| HR         | Ajay     |
+| IT         | Vijay    |
+| IT         | Vinay    |
+| Finance    | Meena    |
+| Marketing  | Veer     |
+| Sales      | Keerthi  |
+| Sales      | Priya    |
+
+
+-- Query 16
+SELECT e.emp_name AS Employee,
+       p.project_name AS Project
+FROM employee_details e
+INNER JOIN project_details p
+ON e.emp_id = p.emp_id
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id
+WHERE d.dept_id IS NULL;
+
+Output:
+No records found.
+
+
+-- Query 17
+SELECT d.dept_name AS Department_Name,
+       COUNT(e.emp_id) AS Total_Employees
+FROM department_details d
+LEFT JOIN employee_details e
+ON d.dept_id = e.department_id
+GROUP BY d.dept_name;
+
+Output:
+| Department_Name | Total_Employees |
+| --------------- | --------------- |
+| Finance         | 1               |
+| HR              | 2               |
+| IT              | 2               |
+| Marketing       | 1               |
+| Sales           | 2               |
+
+
+-- Query 18
+SELECT e.emp_name AS Employee_Name,
+       m.emp_name AS Manager_Name
+FROM employee_details e
+INNER JOIN employee_details m
+ON e.manager_id = m.emp_id;
+
+Output:
+| Employee_Name | Manager_Name |
+| ------------- | ------------ |
+| Ajay          | Karthik      |
+| Vijay         | Karthik      |
+| Vinay         | Ajay         |
+| Meena         | Vijay        |
+| Keerthi       | Vinay        |
+| Priya         | Vinay        |
+
+
+-- Query 19
+SELECT e.emp_name AS Employee,
+       m.emp_name AS Manager
+FROM employee_details e
+LEFT JOIN employee_details m
+ON e.manager_id = m.emp_id;
+
+Output:
+| Employee | Manager |
+| -------- | ------- |
+| Karthik  | NULL    |
+| Ajay     | Karthik |
+| Vijay    | Karthik |
+| Vinay    | Ajay    |
+| Meena    | Vijay   |
+| Veer     | NULL    |
+| Keerthi  | Vinay   |
+| Priya    | Vinay   |
+
+
+-- Query 20
+SELECT d.dept_name AS Department,
+       COUNT(e.emp_id) AS Employee_Count
+FROM department_details d
+LEFT JOIN employee_details e
+ON d.dept_id = e.department_id
+GROUP BY d.dept_name;
+
+Output:
+| Department | Employee_Count |
+| ---------- | -------------- |
+| Finance    | 1              |
+| HR         | 2              |
+| IT         | 2              |
+| Marketing  | 1              |
+| Sales      | 2              |
+
+
+-- Query 21
+SELECT e.emp_name AS Employee,
+       p.project_name AS Project
+FROM employee_details e
+LEFT JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee | Project          |
+| -------- | ---------------- |
+| Karthik  | Project Alpha    |
+| Ajay     | Project Beta     |
+| Vijay    | Project Gamma    |
+| Vinay    | Project Delta    |
+| Meena    | Project Epsilon  |
+| Veer     | NULL             |
+| Keerthi  | NULL             |
+| Priya    | NULL             |
+
+
+-- Query 22
+SELECT e.emp_name AS Employee,
+       d.dept_name AS Department,
+       p.project_name AS Project
+FROM employee_details e
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id
+LEFT JOIN project_details p
+ON e.emp_id = p.emp_id;
+
+Output:
+| Employee | Department | Project          |
+| -------- | ---------- | ---------------- |
+| Karthik  | HR         | Project Alpha    |
+| Ajay     | HR         | Project Beta     |
+| Vijay    | IT         | Project Gamma    |
+| Vinay    | IT         | Project Delta    |
+| Meena    | Finance    | Project Epsilon  |
+| Veer     | Marketing  | NULL             |
+| Keerthi  | Sales      | NULL             |
+| Priya    | Sales      | NULL             |
+
+
+-- Query 23
+SELECT e.emp_name AS Employee_Name,
+       d.dept_name AS Department_Name
+FROM employee_details e
+LEFT JOIN department_details d
+ON e.department_id = d.dept_id;
+
+Output:
+| Employee_Name | Department_Name |
+| ------------- | --------------- |
+| Karthik       | HR              |
+| Ajay          | HR              |
+| Vijay         | IT              |
+| Vinay         | IT              |
+| Meena         | Finance         |
+| Veer          | Marketing       |
+| Keerthi       | Sales           |
+| Priya         | Sales           |
