@@ -1,1 +1,141 @@
+CREATE TABLE customer_orders (
+    order_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    order_date DATE,
+    order_time TIMESTAMP,
+    delivery_date DATE,
+    amount DECIMAL(10,2)
+);
 
+INSERT INTO customer_orders VALUES
+(1, 'Karthik', '2024-01-15', '2024-01-15 10:30:45', '2024-01-20', 2500.00),
+(2, 'Veena', '2024-02-18', '2024-02-18 18:45:20', '2024-02-22', 3200.50),
+(3, 'Ravi', '2024-03-02', '2024-03-02 09:15:10', '2024-03-08', 4100.75),
+(4, 'Anil', '2024-03-09', '2024-03-09 14:05:55', '2024-03-15', 1800.00),
+(5, 'Suresh', '2024-01-07', '2024-01-07 23:55:00', '2024-01-12', 2900.00);
+
+
+-- Query 1
+SELECT CURDATE();
+
+Output:
+| CURDATE() |
+| ---------- |
+| 2026-05-17 |
+
+
+-- Query 2
+SELECT CURRENT_DATE();
+
+Output:
+| CURRENT_DATE() |
+| -------------- |
+| 2026-05-17     |
+
+
+-- Query 3
+SELECT CURTIME();
+
+Output:
+| CURTIME() |
+| --------- |
+| 04:26:07  |
+
+
+-- Query 4
+SELECT NOW();
+
+Output:
+| NOW()               |
+| ------------------- |
+| 2026-05-17 04:26:07 |
+
+
+-- Query 5
+SELECT YEAR(order_date),
+       MONTH(order_date),
+       DAY(order_date)
+FROM customer_orders;
+
+Output:
+| YEAR | MONTH | DAY |
+| ---- | ----- | --- |
+| 2024 | 1     | 15  |
+| 2024 | 2     | 18  |
+| 2024 | 3     | 2   |
+| 2024 | 3     | 9   |
+| 2024 | 1     | 7   |
+
+
+-- Query 6
+SELECT MONTHNAME(order_date),
+       DAYNAME(order_date)
+FROM customer_orders;
+
+Output:
+| MONTHNAME | DAYNAME |
+| --------- | ------- |
+| January   | Monday  |
+| February  | Sunday  |
+| March     | Saturday|
+| March     | Saturday|
+| January   | Sunday  |
+
+
+-- Query 7
+SELECT order_id, order_date
+FROM customer_orders
+WHERE DAYNAME(order_date) IN ('Saturday','Sunday');
+
+Output:
+| order_id | order_date |
+| -------- | ---------- |
+| 2        | 2024-02-18 |
+| 3        | 2024-03-02 |
+| 4        | 2024-03-09 |
+| 5        | 2024-01-07 |
+
+
+-- Query 8
+SELECT order_date,
+       DATE_ADD(order_date, INTERVAL 5 DAY)
+FROM customer_orders;
+
+Output:
+| order_date | Added_Date |
+| ---------- | ---------- |
+| 2024-01-15 | 2024-01-20 |
+| 2024-02-18 | 2024-02-23 |
+| 2024-03-02 | 2024-03-07 |
+| 2024-03-09 | 2024-03-14 |
+| 2024-01-07 | 2024-01-12 |
+
+
+-- Query 9
+SELECT order_date,
+       DATE_SUB(order_date, INTERVAL 3 DAY)
+FROM customer_orders;
+
+Output:
+| order_date | Subtracted_Date |
+| ---------- | --------------- |
+| 2024-01-15 | 2024-01-12      |
+| 2024-02-18 | 2024-02-15      |
+| 2024-03-02 | 2024-02-28      |
+| 2024-03-09 | 2024-03-06      |
+| 2024-01-07 | 2024-01-04      |
+
+
+-- Query 10
+SELECT order_id,
+       DATEDIFF(delivery_date, order_date) AS delivery_days
+FROM customer_orders;
+
+Output:
+| order_id | delivery_days |
+| -------- | ------------- |
+| 1        | 5             |
+| 2        | 4             |
+| 3        | 6             |
+| 4        | 6             |
+| 5        | 5             |
