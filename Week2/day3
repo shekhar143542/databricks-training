@@ -1,0 +1,180 @@
+CREATE TABLE regex_data (
+    id INT,
+    text_value VARCHAR(100)
+);
+
+INSERT INTO regex_data VALUES
+(1, '123ABc'),
+(2, 'abc123'),
+(3, '123abc567'),
+(4, 'abcdefghi123'),
+(5, 'swaroop@gmail.com'),
+(6, '+91-9989454737');
+
+
+-- Query 1
+SELECT text_value,
+       text_value REGEXP '[0-9]' AS contains_number
+FROM regex_data;
+
+Output:
+| text_value        | contains_number |
+| ----------------- | --------------- |
+| 123ABc            | 1               |
+| abc123            | 1               |
+| 123abc567         | 1               |
+| abcdefghi123      | 1               |
+| swaroop@gmail.com | 0               |
+| +91-9989454737    | 1               |
+
+
+-- Query 2
+SELECT text_value,
+       text_value REGEXP '[A-Za-z]' AS contains_letters
+FROM regex_data;
+
+Output:
+| text_value        | contains_letters |
+| ----------------- | ---------------- |
+| 123ABc            | 1                |
+| abc123            | 1                |
+| 123abc567         | 1                |
+| abcdefghi123      | 1                |
+| swaroop@gmail.com | 1                |
+| +91-9989454737    | 0                |
+
+
+-- Query 3
+SELECT text_value,
+       text_value REGEXP '^[0-9]' AS starts_with_number
+FROM regex_data;
+
+Output:
+| text_value        | starts_with_number |
+| ----------------- | ------------------ |
+| 123ABc            | 1                  |
+| abc123            | 0                  |
+| 123abc567         | 1                  |
+| abcdefghi123      | 0                  |
+| swaroop@gmail.com | 0                  |
+| +91-9989454737    | 0                  |
+
+
+-- Query 4
+SELECT text_value,
+       text_value REGEXP '[0-9]$' AS ends_with_number
+FROM regex_data;
+
+Output:
+| text_value        | ends_with_number |
+| ----------------- | ---------------- |
+| 123ABc            | 0                |
+| abc123            | 1                |
+| 123abc567         | 1                |
+| abcdefghi123      | 1                |
+| swaroop@gmail.com | 0                |
+| +91-9989454737    | 1                |
+
+
+-- Query 5
+SELECT text_value,
+       text_value REGEXP '[0-9]{2}' AS two_digit_match
+FROM regex_data;
+
+Output:
+| text_value        | two_digit_match |
+| ----------------- | --------------- |
+| 123ABc            | 1               |
+| abc123            | 1               |
+| 123abc567         | 1               |
+| abcdefghi123      | 1               |
+| swaroop@gmail.com | 0               |
+| +91-9989454737    | 1               |
+
+
+-- Query 6
+SELECT text_value,
+       text_value REGEXP '[A-Za-z]{2}' AS two_letter_match
+FROM regex_data;
+
+Output:
+| text_value        | two_letter_match |
+| ----------------- | ---------------- |
+| 123ABc            | 1                |
+| abc123            | 1                |
+| 123abc567         | 1                |
+| abcdefghi123      | 1                |
+| swaroop@gmail.com | 1                |
+| +91-9989454737    | 0                |
+
+
+-- Query 7
+SELECT text_value,
+       text_value REGEXP '[0-9]+' AS digit_sequence
+FROM regex_data;
+
+Output:
+| text_value        | digit_sequence |
+| ----------------- | -------------- |
+| 123ABc            | 1              |
+| abc123            | 1              |
+| 123abc567         | 1              |
+| abcdefghi123      | 1              |
+| swaroop@gmail.com | 0              |
+| +91-9989454737    | 1              |
+
+
+-- Query 8
+SELECT text_value,
+       text_value REGEXP '[A-Za-z]+' AS alphabet_sequence
+FROM regex_data;
+
+Output:
+| text_value        | alphabet_sequence |
+| ----------------- | ----------------- |
+| 123ABc            | 1                 |
+| abc123            | 1                 |
+| 123abc567         | 1                 |
+| abcdefghi123      | 1                 |
+| swaroop@gmail.com | 1                 |
+| +91-9989454737    | 0                 |
+
+
+-- Query 9
+SELECT text_value,
+CASE
+    WHEN text_value REGEXP '^[A-Za-z0-9._-]+@[A-Za-z0-9]+\\.[A-Za-z]{2,3}$'
+    THEN 'Correct Email'
+    ELSE 'Wrong Email'
+END AS email_check
+FROM regex_data;
+
+Output:
+| text_value        | email_check  |
+| ----------------- | ------------ |
+| 123ABc            | Wrong Email  |
+| abc123            | Wrong Email  |
+| 123abc567         | Wrong Email  |
+| abcdefghi123      | Wrong Email  |
+| swaroop@gmail.com | Correct Email|
+| +91-9989454737    | Wrong Email  |
+
+
+-- Query 10
+SELECT text_value,
+CASE
+    WHEN text_value REGEXP '^\\+91-[0-9]{10}$'
+    THEN 'Valid Number'
+    ELSE 'Invalid Number'
+END AS phone_check
+FROM regex_data;
+
+Output:
+| text_value        | phone_check   |
+| ----------------- | ------------- |
+| 123ABc            | Invalid Number|
+| abc123            | Invalid Number|
+| 123abc567         | Invalid Number|
+| abcdefghi123      | Invalid Number|
+| swaroop@gmail.com | Invalid Number|
+| +91-9989454737    | Valid Number  |
