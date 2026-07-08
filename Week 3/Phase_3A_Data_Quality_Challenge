@@ -1,1 +1,45 @@
+# Week 3 - Data Quality & Cleaning Challenge
 
+## Overview
+This week's task focuses on cleaning and validating messy datasets using PySpark. The objective is to identify common data quality issues and apply appropriate data cleaning techniques before performing data analysis and aggregation.
+
+## Objectives
+- Create a sample dataset with data quality issues.
+- Identify null values, duplicate records, and invalid data.
+- Clean the dataset using PySpark DataFrame operations.
+- Validate the cleaned dataset.
+- Perform aggregation on the cleaned data.
+- Understand the importance of data quality in real-world data engineering.
+
+## Topics Covered
+- Data Quality
+- Handling Null Values
+- Removing Duplicate Records
+- Filtering Invalid Data
+- Data Validation
+- GroupBy Aggregation
+- PySpark DataFrame Operations
+
+## Data Cleaning Steps
+1. Load the raw dataset.
+2. Identify data quality issues.
+3. Remove rows containing null values.
+4. Remove duplicate records.
+5. Filter invalid age values.
+6. Validate the cleaned dataset.
+7. Perform city-wise customer aggregation.
+
+## Key Learnings
+- Data cleaning is an essential step before analysis.
+- Poor-quality data can produce incorrect business insights.
+- Validation ensures the reliability of processed data.
+- PySpark provides efficient functions for handling large datasets.
+
+## Technologies Used
+- Apache Spark
+- PySpark
+- Databricks
+- Python
+
+## Outcome
+Successfully cleaned the dataset, validated the results, and generated accurate customer counts by city using PySpark transformations and aggregation functions.
