@@ -1,1 +1,377 @@
+-- ============================================================
+-- SQL ASSIGNMENT 1
+-- Employee Management & Customer Order Management Database
+-- MySQL 8
+-- ============================================================
 
+-- ============================================================
+-- 1. DATABASE SCHEMA (CREATE TABLE + PRIMARY KEY + FOREIGN KEY)
+-- ============================================================
+
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Customers;
+DROP TABLE IF EXISTS Employees;
+DROP TABLE IF EXISTS Departments;
+
+CREATE TABLE Departments (
+    dept_id     INT PRIMARY KEY,
+    dept_name   VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Employees (
+    emp_id      INT PRIMARY KEY,
+    emp_name    VARCHAR(50) NOT NULL,
+    dept_id     INT,
+    salary      DECIMAL(10,2),
+    hire_date   DATE,
+    manager_id  INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id),
+    FOREIGN KEY (manager_id) REFERENCES Employees(emp_id)
+);
+
+CREATE TABLE Customers (
+    customer_id     INT PRIMARY KEY,
+    customer_name   VARCHAR(50) NOT NULL,
+    city            VARCHAR(50)
+);
+
+CREATE TABLE Orders (
+    order_id     INT PRIMARY KEY,
+    customer_id  INT,
+    order_date   DATE,
+    amount       DECIMAL(10,2),
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+-- ============================================================
+-- 2. SAMPLE DATA (INSERT INTO)
+-- ============================================================
+
+INSERT INTO Departments (dept_id, dept_name) VALUES
+(1, 'HR'),
+(2, 'IT'),
+(3, 'Sales'),
+(4, 'Finance');
+
+INSERT INTO Employees (emp_id, emp_name, dept_id, salary, hire_date, manager_id) VALUES
+(101, 'Ravi Kumar',     2, 65000, '2019-03-15', NULL),
+(102, 'Anita Sharma',   2, 58000, '2020-06-01', 101),
+(103, 'Suresh Reddy',   2, 72000, '2018-01-10', 101),
+(104, 'Priya Nair',     1, 45000, '2021-09-23', NULL),
+(105, 'Kiran Rao',      1, 47000, '2022-02-14', 104),
+(106, 'Vijay Singh',    3, 55000, '2017-11-05', NULL),
+(107, 'Meena Iyer',     3, 60000, '2019-07-19', 106),
+(108, 'Arjun Das',      3, 55000, '2023-01-30', 106),
+(109, 'Divya Menon',    4, 80000, '2016-04-12', NULL),
+(110, 'Rahul Verma',    4, 62000, '2020-10-08', 109),
+(111, 'Sneha Pillai',   4, 62000, '2021-12-01', 109),
+(112, 'Manoj Tiwari',   2, 58000, '2023-05-17', 101);
+
+INSERT INTO Customers (customer_id, customer_name, city) VALUES
+(1, 'Amit Traders',     'Hyderabad'),
+(2, 'Global Textiles',  'Mumbai'),
+(3, 'Sunrise Foods',    'Chennai'),
+(4, 'Amit Traders',     'Bangalore'),
+(5, 'Nova Electronics', 'Delhi'),
+(6, 'Green Farms',      'Pune');
+
+INSERT INTO Orders (order_id, customer_id, order_date, amount) VALUES
+(1001, 1, '2024-01-15', 12000),
+(1002, 1, '2024-02-10', 8000),
+(1003, 2, '2024-01-20', 25000),
+(1004, 3, '2024-03-05', 5000),
+(1005, 3, '2024-03-25', 15000),
+(1006, 3, '2024-04-02', 9000),
+(1007, 3, '2024-04-18', 11000),
+(1008, 5, '2024-02-14', 30000),
+(1009, 5, '2024-05-01', 20000),
+(1010, 2, '2024-05-20', 18000);
+
+-- Note: Customer 4 (Amit Traders - Bangalore) and Customer 6 (Green Farms)
+-- have no orders, used for Query 15.
+
+
+-- ============================================================
+-- QUERY 1
+-- Display employee name, department name, and salary.
+-- ============================================================
+SELECT e.emp_name, d.dept_name, e.salary
+FROM Employees e
+INNER JOIN Departments d ON e.dept_id = d.dept_id;
+
+
+-- ============================================================
+-- QUERY 2
+-- Display all departments along with the number of employees.
+-- ============================================================
+SELECT d.dept_name, COUNT(e.emp_id) AS employee_count
+FROM Departments d
+LEFT JOIN Employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name;
+
+
+-- ============================================================
+-- QUERY 3
+-- Display employees along with their manager names. (Self Join)
+-- ============================================================
+SELECT e.emp_name AS employee, m.emp_name AS manager
+FROM Employees e
+LEFT JOIN Employees m ON e.manager_id = m.emp_id;
+
+
+-- ============================================================
+-- QUERY 4
+-- Calculate total salary expenditure for each department.
+-- ============================================================
+SELECT d.dept_name, SUM(e.salary) AS total_salary
+FROM Departments d
+JOIN Employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name;
+
+
+-- ============================================================
+-- QUERY 5
+-- Find average salary for each department.
+-- ============================================================
+SELECT d.dept_name, AVG(e.salary) AS avg_salary
+FROM Departments d
+JOIN Employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name;
+
+
+-- ============================================================
+-- QUERY 6
+-- Identify the department with the highest average salary.
+-- ============================================================
+SELECT d.dept_name, AVG(e.salary) AS avg_salary
+FROM Departments d
+JOIN Employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name
+ORDER BY avg_salary DESC
+LIMIT 1;
+
+
+-- ============================================================
+-- QUERY 7
+-- Find employees earning more than the company average salary.
+-- ============================================================
+SELECT emp_name, salary
+FROM Employees
+WHERE salary > (SELECT AVG(salary) FROM Employees);
+
+
+-- ============================================================
+-- QUERY 8
+-- Find employees earning more than their department average salary.
+-- (Correlated Subquery)
+-- ============================================================
+SELECT e.emp_name, e.dept_id, e.salary
+FROM Employees e
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM Employees e2
+    WHERE e2.dept_id = e.dept_id
+);
+
+
+-- ============================================================
+-- QUERY 9
+-- Find the second highest salary in the company.
+-- ============================================================
+SELECT DISTINCT salary
+FROM Employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;
+
+-- Alternative using subquery:
+-- SELECT MAX(salary) AS second_highest
+-- FROM Employees
+-- WHERE salary < (SELECT MAX(salary) FROM Employees);
+
+
+-- ============================================================
+-- QUERY 10
+-- Find employees earning the maximum salary in each department.
+-- ============================================================
+SELECT e.emp_name, e.dept_id, e.salary
+FROM Employees e
+WHERE e.salary = (
+    SELECT MAX(e2.salary)
+    FROM Employees e2
+    WHERE e2.dept_id = e.dept_id
+);
+
+
+-- ============================================================
+-- QUERY 11
+-- Rank employees based on salary within each department.
+-- ============================================================
+SELECT emp_name, dept_id, salary,
+       RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS salary_rank
+FROM Employees;
+
+
+-- ============================================================
+-- QUERY 12
+-- Display the top three highest-paid employees in every department.
+-- ============================================================
+SELECT emp_name, dept_id, salary, drnk
+FROM (
+    SELECT emp_name, dept_id, salary,
+           DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS drnk
+    FROM Employees
+) ranked
+WHERE drnk <= 3;
+
+
+-- ============================================================
+-- QUERY 13
+-- Calculate the running total of employee salaries ordered by hire date.
+-- ============================================================
+SELECT emp_name, hire_date, salary,
+       SUM(salary) OVER (ORDER BY hire_date) AS running_total
+FROM Employees;
+
+
+-- ============================================================
+-- QUERY 14
+-- Display the previous employee salary using the LAG() function.
+-- ============================================================
+SELECT emp_name, hire_date, salary,
+       LAG(salary) OVER (ORDER BY hire_date) AS previous_salary
+FROM Employees;
+
+
+-- ============================================================
+-- QUERY 15
+-- Find customers who never placed an order.
+-- ============================================================
+SELECT c.customer_id, c.customer_name, c.city
+FROM Customers c
+LEFT JOIN Orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;
+
+
+-- ============================================================
+-- QUERY 16
+-- Find the latest order placed by each customer.
+-- ============================================================
+SELECT o.customer_id, c.customer_name, o.order_date, o.amount
+FROM Orders o
+JOIN Customers c ON o.customer_id = c.customer_id
+WHERE o.order_date = (
+    SELECT MAX(o2.order_date)
+    FROM Orders o2
+    WHERE o2.customer_id = o.customer_id
+);
+
+
+-- ============================================================
+-- QUERY 17
+-- Calculate total sales generated by each customer.
+-- ============================================================
+SELECT c.customer_name, SUM(o.amount) AS total_sales
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+
+
+-- ============================================================
+-- QUERY 18
+-- Calculate each customer's contribution percentage to total sales.
+-- ============================================================
+SELECT c.customer_name,
+       SUM(o.amount) AS customer_sales,
+       ROUND(SUM(o.amount) * 100.0 / (SELECT SUM(amount) FROM Orders), 2) AS contribution_percent
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+
+
+-- ============================================================
+-- QUERY 19
+-- Identify duplicate customer names.
+-- ============================================================
+SELECT customer_name, COUNT(*) AS occurrences
+FROM Customers
+GROUP BY customer_name
+HAVING COUNT(*) > 1;
+
+
+-- ============================================================
+-- QUERY 20
+-- Classify employees into salary bands using CASE statements.
+-- ============================================================
+SELECT emp_name, salary,
+    CASE
+        WHEN salary < 50000 THEN 'Low'
+        WHEN salary BETWEEN 50000 AND 65000 THEN 'Medium'
+        ELSE 'High'
+    END AS salary_band
+FROM Employees;
+
+
+-- ============================================================
+-- QUERY 21
+-- Find employees having the same salary.
+-- ============================================================
+SELECT emp_name, salary
+FROM Employees
+WHERE salary IN (
+    SELECT salary
+    FROM Employees
+    GROUP BY salary
+    HAVING COUNT(*) > 1
+)
+ORDER BY salary;
+
+
+-- ============================================================
+-- QUERY 22
+-- Find customers who placed more than three orders.
+-- ============================================================
+SELECT c.customer_name, COUNT(o.order_id) AS order_count
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_name
+HAVING COUNT(o.order_id) > 3;
+
+
+-- ============================================================
+-- QUERY 23
+-- Identify the month with the highest sales.
+-- ============================================================
+SELECT MONTH(order_date) AS sales_month, SUM(amount) AS total_sales
+FROM Orders
+GROUP BY MONTH(order_date)
+ORDER BY total_sales DESC
+LIMIT 1;
+
+
+-- ============================================================
+-- QUERY 24
+-- Calculate the number of days between consecutive customer orders.
+-- ============================================================
+SELECT customer_id, order_id, order_date,
+       DATEDIFF(
+           order_date,
+           LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date)
+       ) AS days_since_last_order
+FROM Orders;
+
+
+-- ============================================================
+-- QUERY 25
+-- Find departments where no employee was hired during the last two years.
+-- ============================================================
+SELECT d.dept_name
+FROM Departments d
+WHERE d.dept_id NOT IN (
+    SELECT DISTINCT e.dept_id
+    FROM Employees e
+    WHERE e.hire_date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+);
+
+-- ============================================================
+-- END OF ASSIGNMENT
+-- ============================================================
