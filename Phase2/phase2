@@ -1,0 +1,23 @@
+SQL to PySpark — Bridge Pack Description
+This project practices moving from SQL thinking to PySpark thinking, using two small tables — customers and orders — joined together to answer seven common business questions.
+The data
+Two files are used:
+•	customers.csv — one row per customer, with an id, name, and city.
+•	orders.csv — one row per order, with an id, the customer it belongs to, and an amount.
+Each file has one row with a missing customer id, and two customers were given no orders at all, so the cleaning step and the "no orders" exercise both have something real to catch.
+Cleaning step
+Before anything else, rows with a missing customer_id are dropped from both tables. A missing id can't be matched to anything in a join, so keeping it around would either silently disappear in later steps or cause misleading results.
+The seven exercises
+For every exercise, the same question is answered twice: once written as plain SQL, and once written using PySpark's DataFrame methods. Running both side by side makes the mapping between the two languages easy to see.
+#	Exercise	Approach
+1	Total order amount for each customer	Inner join + SUM, grouped by customer
+2	Top 3 customers by total spend	Same as #1, sorted descending, limited to 3
+3	Customers with no orders	Left join, keep rows where the order side is empty
+4	City-wise total revenue	Inner join + SUM, grouped by city
+5	Average order amount per customer	Inner join + AVG, grouped by customer
+6	Customers with more than one order	Inner join + COUNT, grouped by customer, filtered to count > 1
+7	Sort customers by total spend descending	Left join so zero-order customers are included, then sorted
+The key idea: inner join vs. left join
+Most exercises only care about customers who actually placed an order, so an inner join is enough. But exercise 3 (no orders) and exercise 7 (sort everyone by spend) specifically need customers with zero orders to still show up — an inner join would quietly drop them. A left join keeps every customer, and any customer with no matching order simply gets empty or zero values.
+What this shows
+Together, the exercises cover the core relational skills that come up constantly in real data work: joining two tables, grouping and summarizing, filtering before and after aggregation, and choosing the right join type depending on whether missing matches should be kept or dropped.
