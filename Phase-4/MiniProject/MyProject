@@ -1,0 +1,30 @@
+Business Sales Pipeline — Project Write-Up
+This project builds a simple data pipeline that takes raw sales records and turns them into business insights, like daily sales totals, top customers, and customer segments.
+What the project does
+The pipeline reads a sales file (order id, customer, city, date, amount) and processes it in three stages: clean the data, calculate business metrics, and save a final report.
+Stage 1: Cleaning the data
+Before any calculations happen, the raw data is cleaned up so the numbers can be trusted:
+•	Rows with a missing customer ID are removed, since they can't be linked to a real customer.
+•	Duplicate rows are removed, so no order is counted twice.
+•	Rows with a negative amount are removed, since a sale can't have negative value.
+•	Each column is checked and converted to the right type (numbers as numbers, dates as dates).
+Stage 2: Business calculations
+Once the data is clean, the pipeline runs seven tasks:
+Task	What it does	Output columns
+Task 1	Daily Sales	date, total_sales
+Task 2	City-wise Revenue	city, total_revenue
+Task 3	Top 5 Customers	customer_name, total_spend
+Task 4	Repeat Customers (>1 order)	customer_id, order_count
+Task 5	Customer Segmentation	customer_name, total_spend, segment
+Task 6	Final Reporting Table	customer_name, city, total_spend, order_count, segment
+Task 7	Save Output	CSV file written to output/report
+Stage 3: Saving the result
+The final report — one row per customer, showing their city, total spend, number of orders, and segment (Gold, Silver, or Bronze) — is saved as a CSV file so it can be shared or loaded into another tool.
+How segments are decided
+•	Total spend above 10,000 → Gold
+•	Total spend between 5,000 and 10,000 → Silver
+•	Total spend below 5,000 → Bronze
+Why cleaning happens first
+If dirty data is joined or grouped before it's cleaned, the mistakes spread everywhere. A missing customer ID can silently drop or merge orders, and a duplicate row can double-count a sale. Cleaning first keeps every later step accurate.
+What this shows
+Overall, the project shows a full, repeatable path from raw data to a business-ready report: load the data, clean it, calculate the metrics that matter, and produce one clear table that a business team could actually use.
