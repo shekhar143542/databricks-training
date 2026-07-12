@@ -1,0 +1,58 @@
+# Databricks notebook source
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC # Sales Data ETL Pipeline
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## 1. Extract Data
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, sum as spark_sum
+
+spark = SparkSession.builder.appName("Sales_ETL_Pipeline").getOrCreate()
+
+input_path = "/Workspace/Users/arjunposni@gmail.com/db_sales.csv"
+
+sales_df = spark.read \
+    .option("header", True) \
+    .option("inferSchema", True) \
+    .csv(input_path)
+
+sales_df.show()
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## 2. Clean Data
+
+clean_df = sales_df.dropna()
+
+valid_sales_df = clean_df.filter(col("amount") > 0)
+
+valid_sales_df.show()
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## 3. Transform Data
+
+final_report = valid_sales_df \
+    .groupBy("customer_id", "city") \
+    .agg(spark_sum("amount").alias("total_sales")) \
+    .orderBy(col("total_sales").desc())
+
+final_report.show()
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## 4. Load Data
+
+output_path = "/Volumes/workspace/default/assignment_data/final_sales_report"
+
+final_report.coalesce(1) \
+    .write \
+    .mode("overwrite") \
+    .option("header", True) \
+    .csv(output_path)
+
+print("Sales ETL pipeline executed successfully!")
