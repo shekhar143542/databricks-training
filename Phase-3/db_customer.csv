@@ -1,0 +1,8 @@
+customer_id,name,age,city
+101,Arjun,22,Hyderabad
+102,Rahul,25,Bangalore
+103,Priya,24,Chennai
+104,Anjali,,Hyderabad
+105,Ravi,-1,Mumbai
+106,Kiran,30,
+107,Sneha,27,Bangalore
